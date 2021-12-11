@@ -37,16 +37,25 @@ func receiveTCPConnection(listener *net.TCPListener) {
 		logFatal(err)
 
 		// ハンドラーに接続情報を渡す
-		handler(conn)
+		go handler(conn)
 	}
 }
+
+var responseID = 0
 
 func handler(conn *net.TCPConn) {
 	defer conn.Close()
 	for {
 		// リクエストを受け付けたらサーバー側に「response from server」を返す
-		res, err := io.WriteString(conn, "response from server\n")
-		log.Println(res)
+		_, err := io.WriteString(conn, "response from server\n")
+		if err != nil {
+			return
+		}
+		responseID += 1
+		_, err = io.WriteString(
+			conn,
+			fmt.Sprintf("responseID: %d\n", responseID),
+		)
 		if err != nil {
 			return
 		}
