@@ -36,7 +36,23 @@ func receiveTCPConnection(listener *net.TCPListener) {
 	for {
 		// クライアントからのコネクション情報を受け取る
 		conn, err := listener.AcceptTCP()
-		logFatal(err)
+		if err != nil {
+			switch err := err.(type) {
+			case net.Error:
+				if err.Timeout() {
+					log.Println("Tcp Listener Close")
+					return
+				}
+				if err.Temporary() {
+					log.Printf("Temporay Error: %s\n", err.Error())
+					return
+				}
+			default:
+				log.Println("Another Error!!!")
+				return
+			}
+			logFatal(err)
+		}
 
 		// ハンドラーに接続情報を渡す
 		go handler(conn)
@@ -61,6 +77,7 @@ func handler(conn *net.TCPConn) {
 		if err != nil {
 			return
 		}
+		fmt.Println("response returned")
 		time.Sleep(time.Second)
 	}
 }
