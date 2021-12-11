@@ -26,13 +26,10 @@ func main() {
 	listener, err := net.ListenTCP("tcp", tcpAddr)
 	logFatal(err)
 
-	listener.SetDeadline(time.Now().Add(time.Second * 5))
+	listener.SetDeadline(time.Now().Add(time.Second * 10))
 
 	fmt.Println("Start TCP Server...")
-	receiveTCPConnection(listener)
-}
 
-func receiveTCPConnection(listener *net.TCPListener) {
 	for {
 		// クライアントからのコネクション情報を受け取る
 		conn, err := listener.AcceptTCP()

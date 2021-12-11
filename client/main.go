@@ -19,7 +19,7 @@ func main() {
 	}
 
 	// 10秒後接続が切れる
-	conn.SetReadDeadline(time.Now().Add(time.Second * 10))
+	conn.SetReadDeadline(time.Now().Add(time.Second * 5))
 
 	// connからレスポンスを標準出力にだす
 	response(os.Stdout, conn)
