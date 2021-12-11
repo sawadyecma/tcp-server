@@ -26,6 +26,8 @@ func main() {
 	listener, err := net.ListenTCP("tcp", tcpAddr)
 	logFatal(err)
 
+	listener.SetDeadline(time.Now().Add(time.Second * 5))
+
 	fmt.Println("Start TCP Server...")
 	receiveTCPConnection(listener)
 }
