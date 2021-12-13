@@ -29,7 +29,14 @@ func sendMessage(connection net.Conn) {
 		return
 	}
 
-	_, err := connection.Write([]byte(stdin.Text()))
+	req := []byte(stdin.Text())
+
+	if len(req) == 0 {
+		fmt.Println("[Error]message empty!")
+		return
+	}
+
+	_, err := connection.Write(req)
 
 	if err != nil {
 		panic(err)
