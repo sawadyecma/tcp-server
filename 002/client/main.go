@@ -15,11 +15,13 @@ func main() {
 	}
 
 	defer connection.Close()
-	sendMessage(connection)
+	for {
+		sendMessage(connection)
+	}
 }
 
 func sendMessage(connection net.Conn) {
-	fmt.Print("> ")
+	fmt.Print("TcpClient> ")
 
 	stdin := bufio.NewScanner(os.Stdin)
 	if stdin.Scan() == false {
@@ -41,6 +43,4 @@ func sendMessage(connection net.Conn) {
 	}
 
 	fmt.Printf("Server> %s \n", response)
-
-	sendMessage(connection)
 }

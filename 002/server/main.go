@@ -55,7 +55,10 @@ func echo(connection net.Conn) {
 
 	fmt.Printf("Client> %s \n", buf)
 
-	n, err = connection.Write(buf[:n])
+	res := append([]byte("<"), buf[:n]...)
+	res = append(res, []byte(">")...)
+
+	n, err = connection.Write(res)
 	if err != nil {
 		panic(err)
 	}
