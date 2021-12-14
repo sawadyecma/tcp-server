@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strings"
 )
 
 func main() {
@@ -55,24 +56,29 @@ func echo(connection net.Conn) {
 
 	fmt.Printf("Client> %s \n", buf)
 
+	text := string(buf)
+
+	if strings.Contains(text, "q") {
+		fmt.Println("quit!")
+		n, err = connection.Write([]byte("[conn cloesed]"))
+		if err != nil {
+			panic(err)
+		}
+		err := connection.Close()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("[conn closed!]")
+		return
+	}
+
 	res := append([]byte("<"), buf[:n]...)
 	res = append(res, []byte(">")...)
 
-	n, err = connection.Write([]byte("[1]response is comming soon\n"))
-	if err != nil {
-		panic(err)
-	}
-	n, err = connection.Write([]byte("[2]response is comming soon\n"))
-	if err != nil {
-		panic(err)
-	}
-	n, err = connection.Write([]byte("[3]response is comming soon\n"))
-	if err != nil {
-		panic(err)
-	}
 	n, err = connection.Write(res)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("[echo next]")
 	echo(connection)
 }

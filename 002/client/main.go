@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -16,38 +17,50 @@ func main() {
 
 	defer connection.Close()
 	for {
-		sendMessage(connection)
+		err := sendMessage(connection)
+		if err != nil {
+			fmt.Printf("conn closed err: %s\n", err.Error())
+			break
+		}
 	}
 }
 
-func sendMessage(connection net.Conn) {
+func sendMessage(connection net.Conn) error {
 	fmt.Print("TcpClient> ")
 
 	stdin := bufio.NewScanner(os.Stdin)
 	if stdin.Scan() == false {
 		fmt.Println("Ciao ciao!")
-		return
+		return nil
 	}
 
-	req := []byte(stdin.Text())
+	text := stdin.Text()
+
+	req := []byte(text)
 
 	if len(req) == 0 {
 		fmt.Println("[Error]message empty!")
-		return
+		return nil
 	}
 
 	_, err := connection.Write(req)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	var response = make([]byte, 4*1024)
 	_, err = connection.Read(response)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	fmt.Printf("Server> %s \n", response)
+
+	if text == "q" {
+		return errors.New("conn closed")
+	}
+
+	return nil
 }
