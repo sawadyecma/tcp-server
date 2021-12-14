@@ -58,10 +58,21 @@ func echo(connection net.Conn) {
 	res := append([]byte("<"), buf[:n]...)
 	res = append(res, []byte(">")...)
 
+	n, err = connection.Write([]byte("[1]response is comming soon\n"))
+	if err != nil {
+		panic(err)
+	}
+	n, err = connection.Write([]byte("[2]response is comming soon\n"))
+	if err != nil {
+		panic(err)
+	}
+	n, err = connection.Write([]byte("[3]response is comming soon\n"))
+	if err != nil {
+		panic(err)
+	}
 	n, err = connection.Write(res)
 	if err != nil {
 		panic(err)
 	}
-
 	echo(connection)
 }
